@@ -1044,6 +1044,170 @@ lists of data.
 result.
 * Creating calling the function, functions with parameters, passing default values as arguments.
 
+# PHP Super Global Variables
+
+PHP **Super Global Variables** ဆိုတာ PHP ထဲမှာ **ဘယ်နေရာကမဆို အသုံးပြုနိုင်တဲ့** predefined (ကြိုသတ်မှတ်ထားတဲ့) variables တွေပဲဖြစ်ပါတယ်။ Superglobals တွေကို **function, class, script** ဘယ်နေရာမဆို ပြောမလိုဘဲ သုံးလို့ရပါတယ်။  
+
+---
+
+## **PHP Super Global Variables များ**
+
+PHP ထဲမှာ Super Global Variables **တစ်စုလုံး** ပါဝင်ပြီး အောက်ပါအတိုင်းဖြစ်ပါတယ်။
+
+| Super Global | အကြောင်းဖော်ပြခြင်း |
+|-------------|-----------------|
+| `$_GET` | URL (query string) မှလာသော data များကို သိမ်းဆည်းထားသည် |
+| `$_POST` | Form တို့မှ POST method ဖြင့်လာသော data များကို သိမ်းဆည်းထားသည် |
+| `$_REQUEST` | `$_GET`, `$_POST`, `$_COOKIE` တို့ထဲက value များကိုစုစည်းထားသည် |
+| `$_SESSION` | Session variables ကို သိမ်းဆည်းထားသည် |
+| `$_COOKIE` | User's browser မှ cookies များကို သိမ်းဆည်းထားသည် |
+| `$_FILES` | Form file uploads များကို သိမ်းဆည်းထားသည် |
+| `$_ENV` | Environment variables (server settings) များကို သိမ်းဆည်းထားသည် |
+| `$_SERVER` | Server နှင့် request information များကို သိမ်းဆည်းထားသည် |
+| `$_GLOBALS` | Script တစ်ခုလုံးရဲ့ global variables များကို သိမ်းဆည်းထားသည် |
+
+---
+
+## `$_GET`
+
+`$_GET` ကို **URL** (Query String) မှ data **ယူချင်တဲ့အခါ** အသုံးပြုပါတယ်။
+```php
+// URL: `example.com/index.php?name=Thiri&age=25`
+echo "Your Name: " . $_GET['name'] . "<br>"; // Your Name: Thiri
+echo "Your Age: " . $_GET['age']; // Your Age: 25
+```
+
+---
+
+## `$_POST`
+
+`$_POST` ကို **Form data** တွေ **ပို့ချင်တဲ့အခါ** အသုံးပြုပါတယ်။ `$_POST` ကို **Sensitive Data** (password, email, etc.) များ ပို့တဲ့အခါ သုံးသင့်ပါတယ်။ 
+
+`form.php`
+```php
+<form method="post" action="process.php">
+  Name: <input type="text" name="name">
+  <input type="submit" value="Submit">
+</form>
+```
+`process.php`
+```php
+echo "Your Name: " . $_POST['name'];
+```
+
+
+
+---
+
+## `$_REQUEST`
+
+`$_GET`, `$_POST`, `$_COOKIE` တို့မှ value များကို သိမ်းထားပါတယ်။ `$_REQUEST` ကို **GET/POST မသိရင် သုံးနိုင်ပေမယ့် security မကောင်းပါ။** 
+
+```php
+echo "Your Name: " . $_REQUEST['name'];
+```
+
+---
+
+## `$_SESSION`
+
+User data ကို Server-side **သိမ်းထားလိုက်ချင်တဲ့အခါ** အသုံးပြုပါတယ်။ Sessions ကို **logout လုပ်လိုက်ရင် delete သွားမှာပါ။**  
+
+`start_session.php`
+```php
+session_start();
+$_SESSION['username'] = "Thiri";
+echo "Session Set!";
+```
+`get_session.php`
+```php
+session_start();
+echo "Username: " . $_SESSION['username'];
+```
+
+---
+
+## `$_COOKIE`
+
+Cookies တွေကို **Browser မှာ သိမ်းပြီး user မှာ ပြန်ထုတ်ပြ** လိုချင်တဲ့အခါ အသုံးပြုနိုင်ပါတယ်။
+
+`set_cookie.php`
+```php
+setcookie("username", "Thiri", time() + (86400 * 30), "/"); // 30 Days
+echo "Cookie Set!";
+```
+
+`get_cookie.php`
+```php
+echo "Username: " . $_COOKIE['username'];
+```
+
+---
+
+## `$_FILES`
+
+File Uploading **လုပ်တဲ့အခါ** အသုံးပြုပါတယ်။ `enctype="multipart/form-data"` မထည့်ရင် file upload မလုပ်နိုင်ပါ။
+
+`upload.html`
+```html
+<form action="upload.php" method="post" enctype="multipart/form-data">
+  Select file: <input type="file" name="file">
+  <input type="submit" value="Upload">
+</form>
+```
+
+`upload.php`
+```php
+if ($_FILES['file']['error'] == 0) {
+    move_uploaded_file($_FILES['file']['tmp_name'], "uploads/" . $_FILES['file']['name']);
+    echo "Uploaded Successfully!";
+}
+```
+
+---
+
+## `$_ENV`
+
+System environment variables ကို သိမ်းထားပါတယ်။ Environment variables တွေ `.env` file တွေနဲ့သိမ်းလို့ရပါတယ်။
+
+```php
+echo "Server Name: " . $_ENV["SERVER_NAME"];
+```
+
+---
+
+## `$_SERVER`
+
+Server နှင့် Request အကြောင်းအရာများကို သိမ်းထားပါတယ်။
+
+```php
+echo "PHP_SELF: " . $_SERVER["PHP_SELF"] . "<br>";
+echo "Server Name: " . $_SERVER["SERVER_NAME"] . "<br>";
+echo "Request Method: " . $_SERVER["REQUEST_METHOD"];
+```
+
+---
+
+## `$_GLOBALS`
+
+Global variables များကို script တစ်ခုလုံးမှာ သုံးနိုင်အောင် သိမ်းဆည်းပေးပါတယ်။
+
+### **Example**
+
+```php
+$x = 100;
+$y = 50;
+
+function sum() {
+    global $x, $y;
+    echo $x + $y;
+}
+
+sum(); // Output: 150
+```
+
+---
+
 ## Working with Form
 **A Simple HTML Form**
 ```php
